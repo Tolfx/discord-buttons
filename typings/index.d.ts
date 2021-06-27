@@ -10,7 +10,9 @@ import discord, {
     CollectorOptions,
     APIMessageContentResolvable,
     MessageEmbed,
-    MessageAttachment
+    MessageAttachment,
+    StringResolvable,
+    SplitOptions
 } from 'discord.js';
 
 declare module 'discord.js' {
@@ -19,7 +21,7 @@ declare module 'discord.js' {
     {
         clickButton: [MessageComponent]
     }
-    
+
     export interface MessageOptions
     {
         component?: MessageButton | MessageActionRow;
@@ -47,6 +49,19 @@ declare module 'discord.js' {
         deleteMessage(message: string): Promise<void>;
         fetchMessage(message: string, cache?: boolean): Promise<any>;
     }
+
+    export interface PartialTextBasedChannelFields
+    {
+        send(
+            content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions,
+          ): Promise<Message>;
+        send(options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+        send(options: MessageOptions | APIMessage): Promise<Message | Message[]>;
+        send(content: StringResolvable, options: (MessageOptions & { split?: false }) | MessageAdditions): Promise<Message>;
+        send(content: StringResolvable, options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+        send(content: StringResolvable, options: MessageOptions): Promise<Message | Message[]>;
+        send(content: StringResolvable, options: MessageButton | MessageActionRow): Promise<Message | Message[]>;
+    }
 }
 
 declare module 'discord-buttons' {
@@ -73,14 +88,6 @@ declare module 'discord-buttons' {
         DESTRUCTIVE = 4,
         LINK = 5
     }
-
-    export enum MessageButtonStylesAliases {
-        PRIMARY = 1,
-        SECONDARY = 2,
-        SUCCESS = 3,
-        DESTRUCTIVE = 4,
-        LINK = 5
-    }
     
     export type MessageButtonStyle = keyof typeof MessageButtonStyles;
     
@@ -94,7 +101,7 @@ declare module 'discord-buttons' {
     
     export interface MessageButtonOptions {
         type: MessageComponentTypes.BUTTON,
-        style: MessageButtonStyles | MessageButtonStylesAliases,
+        style: MessageButtonStyles,
         label?: string,
         disabled?: boolean,
         emoji?: string | GuildButtonEmoji,
@@ -105,7 +112,7 @@ declare module 'discord-buttons' {
     
     export interface MessageButtonData {
         type?: MessageComponentTypes.BUTTON,
-        style: MessageButtonStyles | MessageButtonStylesAliases | number,
+        style: MessageButtonStyles | number,
         label?: string,
         disabled?: boolean,
         emoji?: GuildButtonEmoji,
@@ -179,6 +186,12 @@ declare module 'discord-buttons' {
         public custom_id: string;
         public setStyle(style: MessageButtonStyleResolvable): MessageButton;
         public setLabel(label: string): MessageButton;
+        /**
+         * 
+         * @param disabled 
+         * @description
+         * Disables the button
+         */
         public setDisabled(disabled?: boolean): MessageButton;
         public setURL(url: string): MessageButton;
         public setID(id: string): MessageButton;
@@ -269,14 +282,33 @@ declare module 'discord-buttons' {
     export type Awaited<T> = T | Promise<T>;
     
     export interface ExtendedTextChannel extends discord.TextChannel {
-        send(content: APIMessageContentResolvable | MessageAdditions | (MessageOptions & { split?: false; })): Promise<Message>;
+        // First implement all other overloads for send (or typescript is mad)
+        send(content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions,): Promise<Message>;
+        send(options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+        send(options: MessageOptions | discord.APIMessage): Promise<Message | Message[]>;
+        send(content: StringResolvable, options: (MessageOptions & { split?: false }) | MessageAdditions): Promise<Message>;
+        send(content: StringResolvable, options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+        send(content: StringResolvable, options: MessageOptions): Promise<Message | Message[]>;
+        send(content: StringResolvable, options: MessageButton | MessageActionRow): Promise<Message | Message[]>;
     }
-    
+
     export interface ExtendedDMChannel extends discord.DMChannel {
-        send(content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions): Promise<Message>;
+        send(content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions,): Promise<Message>;
+        send(options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+        send(options: MessageOptions | discord.APIMessage): Promise<Message | Message[]>;
+        send(content: StringResolvable, options: (MessageOptions & { split?: false }) | MessageAdditions): Promise<Message>;
+        send(content: StringResolvable, options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+        send(content: StringResolvable, options: MessageOptions): Promise<Message | Message[]>;
+        send(content: StringResolvable, options: MessageButton | MessageActionRow): Promise<Message | Message[]>;
     }
-    
+
     export interface ExtendedNewsChannel extends discord.NewsChannel {
-        send(content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions): Promise<Message>;
+        send(content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions,): Promise<Message>;
+        send(options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+        send(options: MessageOptions | discord.APIMessage): Promise<Message | Message[]>;
+        send(content: StringResolvable, options: (MessageOptions & { split?: false }) | MessageAdditions): Promise<Message>;
+        send(content: StringResolvable, options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+        send(content: StringResolvable, options: MessageOptions): Promise<Message | Message[]>;
+        send(content: StringResolvable, options: MessageButton | MessageActionRow): Promise<Message | Message[]>;
     }
 }
