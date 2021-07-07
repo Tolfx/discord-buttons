@@ -1,4 +1,5 @@
 const { resolveString } = require('discord.js').Util;
+const Util = require('../Util');
 
 class MessageMenuOption {
   constructor(data = {}) {
@@ -38,21 +39,7 @@ class MessageMenuOption {
   }
 
   setEmoji(emoji, animated) {
-    if (!emoji) throw new Error('MISSING_EMOJI: On this option was used `.setEmoji` method without emoji');
-
-    this.emoji = {
-      id: undefined,
-      name: undefined,
-    };
-
-    if (!isNaN(emoji)) this.emoji.id = emoji;
-    if (!isNaN(emoji.id)) this.emoji.id = emoji.id;
-    if (emoji.name) this.emoji.name = emoji.name;
-
-    if (!this.emoji.id && !this.emoji.name) this.emoji.name = emoji;
-
-    if (typeof animated === 'boolean') this.emoji.animated = animated;
-
+    this.emoji = Util.resolveEmoji(emoji, animated);
     return this;
   }
 

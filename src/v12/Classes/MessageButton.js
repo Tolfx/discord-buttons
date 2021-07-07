@@ -1,7 +1,7 @@
 const { MessageComponentTypes } = require('../Constants.js');
 const BaseMessageComponent = require('./interfaces/BaseMessageComponent');
 const { resolveString } = require('discord.js').Util;
-const { resolveStyle } = require('../Util');
+const Util = require('../Util');
 
 class MessageButton extends BaseMessageComponent {
   constructor(data = {}) {
@@ -10,7 +10,7 @@ class MessageButton extends BaseMessageComponent {
   }
 
   setup(data) {
-    this.style = 'style' in data ? resolveStyle(data.style) : null;
+    this.style = 'style' in data ? Util.resolveStyle(data.style) : null;
 
     this.label = 'label' in data && data.label ? resolveString(data.label) : undefined;
 
@@ -28,7 +28,7 @@ class MessageButton extends BaseMessageComponent {
   }
 
   setStyle(style) {
-    style = resolveStyle(style);
+    style = Util.resolveStyle(style);
     this.style = style;
     return this;
   }
@@ -56,21 +56,7 @@ class MessageButton extends BaseMessageComponent {
   }
 
   setEmoji(emoji, animated) {
-    if (!emoji) throw new Error('MISSING_EMOJI: On this option was used `.setEmoji` method without emoji');
-
-    this.emoji = {
-      id: undefined,
-      name: undefined,
-    };
-
-    if (!isNaN(emoji)) this.emoji.id = emoji;
-    if (!isNaN(emoji.id)) this.emoji.id = emoji.id;
-    if (emoji.name) this.emoji.name = emoji.name;
-
-    if (!this.emoji.id && !this.emoji.name) this.emoji.name = emoji;
-
-    if (typeof animated === 'boolean') this.emoji.animated = animated;
-
+    this.emoji = Util.resolveEmoji(emoji, animated);
     return this;
   }
 

@@ -3,6 +3,7 @@ const client = new discord.Client({ intents: discord.Intents.ALL });
 const client2 = new discord.Client({ intents: discord.Intents.ALL });
 const disbut = require('./src/index');
 disbut(client);
+const { MessageButton, MessageActionRow } = require('./src/index');
 
 client.on('ready', () => {
     console.log(client.user.tag);
@@ -33,7 +34,10 @@ client.on('message', async (message) => {
             .setLabel(' ')
             .setID('id')
             .setStyle('blurple')
+            .setEmoji('❌')
             .setDisabled();
+
+        console.log(btn.emoji)
 
         let group1 = new disbut.MessageActionRow().addComponent(btn);
 
@@ -66,7 +70,7 @@ client.on('clickMenu', async (menu) => {
     // let reply = await menu.reply.think();
     if (menu.values[0] === 'reload') {
         menu.message.components[0].components[0].setDisabled(false);
-        console.log(menu.message.components)
+        console.log(menu.message.components[0].components[0])
         menu.message.update('hey', { components: menu.message.components })
     }
 });
