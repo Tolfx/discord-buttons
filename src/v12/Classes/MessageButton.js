@@ -56,7 +56,7 @@ class MessageButton extends BaseMessageComponent {
   }
 
   setEmoji(emoji, animated) {
-    if (!emoji) throw new Error('MISSING_EMOJI: On this option was used `.setEmoji` method without emoji');
+    if (!emoji) throw new Error('MISSING_EMOJI: `.setEmoji` was used without a provided emoji.');
 
     this.emoji = {
       id: undefined,

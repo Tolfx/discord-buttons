@@ -15,7 +15,7 @@ class InteractionReply {
   }
 
   async send(content, options) {
-    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has a reply');
+    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
 
     if (options === null && options !== undefined) options = { components: null };
 
@@ -48,7 +48,7 @@ class InteractionReply {
   }
 
   async edit(content, options) {
-    if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button has no reply');
+    if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button does not have a reply.');
 
     if (options === null && options !== undefined) options = { components: null };
 
@@ -56,7 +56,7 @@ class InteractionReply {
   }
 
   async defer(ephemeral = false) {
-    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has a reply');
+    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
 
     if (ephemeral) this.isEphemeral = true;
 
@@ -73,7 +73,7 @@ class InteractionReply {
   }
 
   async think(ephemeral = false) {
-    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has a reply');
+    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
 
     if (ephemeral) this.isEphemeral = true;
 
@@ -90,13 +90,13 @@ class InteractionReply {
   }
 
   async fetch() {
-    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral');
+    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral.');
     return await this.webhook.fetchMessage('@original');
   }
 
   async delete() {
-    if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button has no reply');
-    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral');
+    if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button has no reply.');
+    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral.');
     return await this.webhook.deleteMessage('@original');
   }
 }

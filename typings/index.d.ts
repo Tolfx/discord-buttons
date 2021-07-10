@@ -33,11 +33,41 @@ declare module 'discord.js' {
     menu?: MessageMenu | MessageMenu[];
     menus?: MessageMenu | MessageMenu[];
   }
+  
+  export interface MessageEditOptions
+  {
+    component?: MessageButton | MessageMenu | MessageActionRow;
+    components?: MessageActionRow[];
+    button?: MessageButton | [MessageButton, ...MessageButton[]];
+    buttons?: MessageButton | [MessageButton, ...MessageButton[]];
+    menu?: MessageMenu | [MessageMenu, ...MessageMenu[]];
+    menus?: MessageMenu | [MessageMenu, ...MessageMenu[]];
+  }
 
   export interface Message {
     components: MessageActionRow[];
     createButtonCollector(filter: CollectorFilter, options?: AwaitMessageButtonOptions): ButtonCollector;
     awaitButtons(filter: CollectorFilter, options?: AwaitMessageButtonOptions): Promise<Collection<Snowflake, MessageComponent>>;
+    edit(
+        content: APIMessageContentResolvable | MessageEditOptions | MessageEmbed | APIMessage,
+      ): Promise<Message>;
+    edit(content: StringResolvable, options: MessageEditOptions | MessageEmbed): Promise<Message>;
+    edit(content: StringResolvable, options: MessageEditOptions | MessageEmbed | MessageButton | MessageActionRow): Promise<Message>;
+    reply(
+        content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions,
+      ): Promise<Message>;
+    reply(options: MessageOptions & { split: true | SplitOptions }): Promise<Message[]>;
+    reply(options: MessageOptions | APIMessage): Promise<Message | Message[]>;
+    reply(
+        content: StringResolvable,
+        options: (MessageOptions & { split?: false }) | MessageAdditions,
+      ): Promise<Message>;
+    reply(
+        content: StringResolvable,
+        options: MessageOptions & { split: true | SplitOptions },
+      ): Promise<Message[]>;
+    reply(content: StringResolvable, options: MessageOptions): Promise<Message | Message[]>;
+    reply(content: StringResolvable, options: MessageOptions | MessageButton | MessageActionRow): Promise<Message>;
   }
 
   export interface WebhookClient {
@@ -146,8 +176,14 @@ export class InteractionReply {
   webhook: WebhookClient;
   has: boolean;
   isEphemeral: boolean;
-  send(content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions): Promise<this>;
-  edit(content: APIMessageContentResolvable | (MessageOptions & { split?: false }) | MessageAdditions): Promise<this>;
+  send(content: APIMessageContentResolvable | (ReplyOptions & { split?: false }) | MessageAdditions): Promise<this>;
+  send(options: ReplyOptions & { split: true | SplitOptions }): Promise<this[]>;
+  send(options: ReplyOptions | discord.APIMessage): Promise<this | this[]>;
+  send(content: StringResolvable, options: (ReplyOptions & { split?: false }) | MessageAdditions): Promise<this>;
+  send(content: StringResolvable, options: ReplyOptions & { split: true | SplitOptions }): Promise<this[]>;
+  send(content: StringResolvable, options: ReplyOptions): Promise<this | this[]>;
+  send(content: StringResolvable, options: MessageButton | MessageActionRow | MessageMenu | ReplyOptions): Promise<this | this[]>;
+  edit(content: APIMessageContentResolvable | (ReplyOptions & { split?: false }) | MessageAdditions): Promise<this>;
   defer(ephemeral: boolean): Promise<this>;
   think(ephemeral: boolean): Promise<this>;
   fetch(): Promise<any>;
