@@ -16,6 +16,9 @@ module.exports = {
   },
   resolveButton(data) {
     if (data.type !== MessageComponentTypes.BUTTON) throw new TypeError('INVALID_BUTTON_TYPE: Invalid type.');
+    
+    if(data.url && data.style !== MessageButtonStyles["url"])
+      data.style = MessageButtonStyles["url"];
 
     if (!data.style) throw new TypeError('NO_BUTTON_STYLE: Please provide a button style.');
 
@@ -25,9 +28,6 @@ module.exports = {
       throw new TypeError('BUTTON_DISABLED: The button disabled option must be a boolean type. (true/false)');
 
     if (data.style === MessageButtonStyles['url'] && !data.url) throw new TypeError('NO_BUTTON_URL: You provided a url style, but did not provide a URL.');
-
-    if (data.style !== MessageButtonStyles['url'] && data.url)
-      throw new TypeError('BOTH_URL_CUSTOM_ID: A custom id and url cannot both be specified.');
 
     if (data.style === MessageButtonStyles['url'] && data.custom_id)
       throw new TypeError('BOTH_URL_CUSTOM_ID: A custom id and url cannot both be specified.');
