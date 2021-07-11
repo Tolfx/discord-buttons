@@ -1,4 +1,4 @@
-const { MessageComponentTypes } = require('../Constants.js');
+const { MessageComponentTypes, MessageButtonStyles } = require('../Constants.js');
 const BaseMessageComponent = require('./interfaces/BaseMessageComponent');
 const { resolveString } = require('discord.js').Util;
 const { resolveStyle } = require('../Util');
