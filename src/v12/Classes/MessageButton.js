@@ -75,6 +75,9 @@ class MessageButton extends BaseMessageComponent {
   }
 
   toJSON() {
+     if(this.url)
+        this.style = MessageButtonStyles["url"];
+    
     return {
       type: MessageComponentTypes.BUTTON,
       style: this.style,
