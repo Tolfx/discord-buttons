@@ -29,9 +29,6 @@ module.exports = {
 
     if (data.style === MessageButtonStyles['url'] && !data.url) throw new TypeError('NO_BUTTON_URL: You provided a url style, but did not provide a URL.');
 
-    if (data.style !== MessageButtonStyles['url'] && data.url)
-      throw new TypeError('BUTTON_STYLE_MISMATCH: A url button must have url style.');
-
     if (data.style === MessageButtonStyles['url'] && data.custom_id)
       throw new TypeError('BOTH_URL_CUSTOM_ID: A custom id and url cannot both be specified.');
 
