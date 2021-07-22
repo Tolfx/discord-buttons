@@ -72,8 +72,8 @@ class MessageMenu extends BaseMessageComponent {
     return this;
   }
   
-  setDisabled(disable = false) {
-    this.disabled = typeof disable === 'boolean' ? disable : false;
+  setDisabled(disable = true) {
+    this.disabled = typeof disable === 'boolean' ? disable : true;
     return this;
   }
 
