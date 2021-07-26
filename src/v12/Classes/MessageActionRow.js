@@ -52,7 +52,7 @@ class MessageActionRow extends BaseMessageComponent {
             }
           })
         : [],
-      type: MessageComponentTypes[this.type],
+      type: MessageComponentTypes.ACTION_ROW,
     };
   }
 }
