@@ -59,7 +59,7 @@ module.exports.multipleImport = (...clients) => {
   }
 
   clients.forEach((client) => {
-    if (!client || !client instanceof Client) throw new Error("INVALID_CLIENT_PROVIDED: Your discord.js Client is invalid or has not been provided.");
+    if (!(client instanceof Client)) throw new Error("INVALID_CLIENT_PROVIDED: Your discord.js Client is invalid or has not been provided.");
 
     client.ws.on('INTERACTION_CREATE', (data) => {
       if (!data.data.component_type) return;
