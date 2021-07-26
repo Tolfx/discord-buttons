@@ -16,7 +16,7 @@ module.exports = (client) => {
     throw new Error('Your discord.js version must be v12 or higher.');
   }
 
-  if (!client || !(client instanceof Client)) throw new Error("INVALID_CLIENT_PROVIDED: Your discord.js Client is invalid or has not been provided.");
+  if (!(client instanceof Client)) throw new Error("INVALID_CLIENT_PROVIDED: Your discord.js Client is invalid or has not been provided.");
 
   const message = Structures.get('Message');
   if (!message.createButtonCollector || typeof message.createButtonCollector !== 'function') {
