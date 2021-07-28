@@ -2,17 +2,11 @@ const { MessageButtonStyles, MessageButtonStylesAliases, MessageComponentTypes }
 
 module.exports = {
   resolveStyle(style) {
-    if (!style || style === undefined || style === null) throw new TypeError('NO_BUTTON_STYLE: Please provide a button style.');
+    if (!style) throw new TypeError('NO_BUTTON_STYLE: Please provide a button style.');
 
-    if (style === 'gray') style = 'grey';
+    if((!MessageButtonStyles[style]) && (!MessageButtonStylesAliases[style])) throw new TypeError('INVALID_BUTTON_STYLE: An invalid button style was provided.');
 
-    if (
-      (!MessageButtonStyles[style] || MessageButtonStyles[style] === undefined || MessageButtonStyles[style] === null) &&
-      (!MessageButtonStylesAliases[style] || MessageButtonStylesAliases[style] === undefined || MessageButtonStylesAliases[style] === null)
-    )
-      throw new TypeError('INVALID_BUTTON_STYLE: An invalid button style was provided.');
-
-    return typeof style === 'string' ? MessageButtonStyles[style] : style;
+    return MessageButtonStyles[style] ? MessageButtonStyles[style] : MessageButtonStylesAliases[style];
   },
   resolveButton(data) {
     if (data.type !== MessageComponentTypes.BUTTON) throw new TypeError('INVALID_BUTTON_TYPE: Invalid type.');
