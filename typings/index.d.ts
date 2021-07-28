@@ -133,9 +133,10 @@ export interface MessageButtonOptions {
 export interface MessageMenuOptions {
   type: MessageComponentTypes.SELECT_MENU;
   label?: string;
-  emoji?: string | GuildButtonEmoji;
-  description?: string;
   value?: string;
+  description?: string;
+  emoji?: string | GuildButtonEmoji;
+  default?: boolean;
 }
 
 export interface MessageButtonData {
@@ -155,18 +156,20 @@ export interface MessageActionRowData {
 
 export interface MessageMenuData {
   type?: MessageComponentTypes.SELECT_MENU;
-  placeholder?: string;
   custom_id?: string;
-  max_values?: number;
-  min_values?: number;
   options?: Array<MessageMenuOptions>;
+  placeholder?: string;
+  min_values?: number;
+  max_values?: number;
+  disabled?: boolean;
 }
 
 export interface MessageMenuOptionsData {
   label?: string;
-  emoji?: string | GuildButtonEmoji;
-  description?: string;
   value?: string;
+  description?: string;
+  emoji?: string | GuildButtonEmoji;
+  default?: boolean;
 }
 
 export class InteractionReply {
@@ -273,6 +276,7 @@ export class MessageMenu extends BaseMessageComponent {
   public addOption(option: MessageMenuOption): MessageMenu;
   public addOptions(...options: MessageMenuOption[]): MessageMenu;
   public removeOptions(index: number, deleteCount: number, ...options: MessageMenuOption[]): MessageMenu;
+  public setDisabled(disable?: boolean): MessageMenu;
   public toJSON(): MessageMenuData;
 }
 
