@@ -2,17 +2,11 @@ const { MessageButtonStyles, MessageButtonStylesAliases, MessageComponentTypes }
 
 module.exports = {
   resolveStyle(style) {
-    if (!style || style === undefined || style === null) throw new TypeError('NO_BUTTON_STYLE: Please provide a button style.');
+    if (!style) throw new TypeError('NO_BUTTON_STYLE: Please provide a button style.');
 
-    if (style === 'gray') style = 'grey';
+    if((!MessageButtonStyles[style]) && (!MessageButtonStylesAliases[style])) throw new TypeError('INVALID_BUTTON_STYLE: An invalid button style was provided.');
 
-    if (
-      (!MessageButtonStyles[style] || MessageButtonStyles[style] === undefined || MessageButtonStyles[style] === null) &&
-      (!MessageButtonStylesAliases[style] || MessageButtonStylesAliases[style] === undefined || MessageButtonStylesAliases[style] === null)
-    )
-      throw new TypeError('INVALID_BUTTON_STYLE: An invalid button style was provided.');
-
-    return typeof style === 'string' ? MessageButtonStyles[style] : style;
+    return MessageButtonStyles[style] ? MessageButtonStyles[style] : MessageButtonStylesAliases[style];
   },
   resolveButton(data) {
     if (data.type !== MessageComponentTypes.BUTTON) throw new TypeError('INVALID_BUTTON_TYPE: Invalid type.');
@@ -64,13 +58,16 @@ module.exports = {
     let maxValues = this.resolveMaxValues(data.max_values);
     let minValues = this.resolveMinValues(data.min_values);
 
+    let disabled = typeof data.disabled === 'boolean' ? data.disabled : false;
+
     return {
       type: MessageComponentTypes.SELECT_MENU,
-      placeholder: data.placeholder,
       custom_id: data.custom_id,
       options: options,
-      max_values: maxValues,
+      placeholder: data.placeholder,
       min_values: minValues,
+      max_values: maxValues,
+      disabled: disabled
     };
   },
   resolveMenuOptions(data) {
@@ -85,8 +82,9 @@ module.exports = {
       options.push({
         label: d.label,
         value: d.value,
-        emoji: d.emoji,
         description: d.description,
+        emoji: d.emoji,
+        default: d.default
       });
     });
 
