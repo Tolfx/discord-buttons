@@ -1,4 +1,4 @@
-const { MessageComponentTypes, MessageButtonStyles } = require('../Constants.js');
+const { MessageComponentTypes, MessageButtonStyles, MessageButtonStyles, MessageButtonStylesAliases } = require('../Constants.js');
 const BaseMessageComponent = require('./interfaces/BaseMessageComponent');
 const { resolveString } = require('discord.js').Util;
 const { resolveStyle } = require('../Util');
@@ -77,6 +77,9 @@ class MessageButton extends BaseMessageComponent {
   toJSON() {
      if(this.url)
         this.style = MessageButtonStyles["url"];
+    
+     if(typeof this.style === "string")
+        this.style = MessageButtonStyles[this.style] ? MessageButtonStyles[this.style] : MessageButtonStylesAliases[this.style];
     
     return {
       type: MessageComponentTypes.BUTTON,
