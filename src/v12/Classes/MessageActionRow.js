@@ -1,58 +1,123 @@
 const MessageButton = require('./MessageButton');
 const MessageMenu = require('./MessageMenu');
 const { MessageComponentTypes } = require('../Constants');
-const BaseMessageComponent = require('./interfaces/BaseMessageComponent');
+const Util = require('../Util');
 
-class MessageActionRow extends BaseMessageComponent {
+class MessageActionRow {
   constructor(data = {}) {
-    super({ type: 'ACTION_ROW' });
+    if (!data.type) return {};
+    this.hasMenu = false;
     this.setup(data);
   }
 
   setup(data) {
-    if ('component' in data) {
-      this.component = BaseMessageComponent.create(component);
-    }
 
     this.components = [];
+    if ('component' in data) {
+      if (data.type === MessageComponentTypes.BUTTON) {
+        Util.checkButton(data);
+        this.components.push(new MessageButton(data));
+
+      } else if (data.type === MessageComponentTypes.SELECT_MENU) {
+
+        if (this.components.length > 0)
+          throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
+
+        Util.checkMenu(data);
+        this.components.push(new MessageMenu(data));
+        this.hasMenu = true;
+
+      }
+    }
+
     if ('components' in data) {
-      this.components = data.components.map((c) => BaseMessageComponent.create(c));
+      this.components.push(data.components.map((c) => {
+        if (c.type === MessageComponentTypes.BUTTON) {
+
+          if (this.hasMenu)
+            throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
+
+          if (this.components.length > 5)
+            throw new Error('TOO_MUCH_COMPONENTS: You can provide 5 buttons per row');
+
+          Util.checkButton(c);
+          return new MessageButton(c);
+
+        } else if (c.type === MessageComponentTypes.SELECT_MENU) {
+
+          if (this.components.length > 0)
+            throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
+
+          Util.checkMenu(c);
+          return new MessageMenu(c);
+
+        }
+      }));
     }
 
     return this;
   }
 
   addComponents(...components) {
-    this.components.push(...components.flat(Infinity).map((c) => BaseMessageComponent.create(c)));
+    this.components.push(...components.flat(Infinity).map((c) => {
+      if (c.type === MessageComponentTypes.BUTTON) {
+
+        if (this.hasMenu)
+          throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
+
+        if (this.components.length > 5)
+          throw new Error('TOO_MUCH_COMPONENTS: You can provide 5 buttons per row');
+
+        Util.checkButton(c);
+        return new MessageButton(c);
+
+      } else if (c.type === MessageComponentTypes.SELECT_MENU) {
+
+        if (this.components.length > 0)
+          throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
+
+        Util.checkMenu(c);
+        return new MessageMenu(c);
+
+      }
+    }));
     return this;
   }
 
-  addComponent(component) {
-    return this.addComponents(component);
+  addComponent(data) {
+    if (data.type === MessageComponentTypes.BUTTON) {
+
+      if (this.hasMenu)
+        throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
+
+      if (this.components.length > 5)
+        throw new Error('TOO_MUCH_COMPONENTS: You can provide 5 buttons per row');
+
+      Util.checkButton(data);
+      this.components.push(new MessageButton(data));
+
+    } else if (data.type === MessageComponentTypes.SELECT_MENU) {
+
+      if (this.components.length > 0)
+        throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
+
+      Util.checkMenu(data);
+      this.components.push(new MessageMenu(data));
+      this.hasMenu = true;
+
+    }
+    return this;
   }
 
-  removeComponents(index, deleteCount, ...components) {
-    this.components.splice(index, deleteCount, ...components.flat(Infinity).map((c) => BaseMessageComponent.create(c)));
+  removeComponents(index, deleteCount) {
+    this.components.splice(index, deleteCount);
     return this;
   }
 
   toJSON() {
     return {
-      components: this.components
-        ? this.components.map((c) => {
-            if (c instanceof MessageButton || c instanceof MessageMenu) {
-              return c;
-            } else {
-              switch (c.type) {
-                case MessageComponentTypes.BUTTON:
-                  return new MessageButton(c);
-                case MessageComponentTypes.SELECT_MENU:
-                  return new MessageMenu(c);
-              }
-            }
-          })
-        : [],
-      type: MessageComponentTypes[this.type],
+      components: this.components,
+      type: MessageComponentTypes.ACTION_ROW,
     };
   }
 }

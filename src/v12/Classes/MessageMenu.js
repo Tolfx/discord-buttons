@@ -1,20 +1,20 @@
 const { MessageComponentTypes } = require('../Constants.js');
-const BaseMessageComponent = require('./interfaces/BaseMessageComponent');
-const { resolveMaxValues, resolveMinValues } = require('../Util');
+const Util = require('../Util');
 const MessageMenuOption = require('./MessageMenuOption');
 
-class MessageMenu extends BaseMessageComponent {
+class MessageMenu {
   constructor(data = {}) {
-    super({ type: 'SELECT_MENU' });
     this.setup(data);
   }
 
   setup(data) {
     this.placeholder = 'placeholder' in data ? data.placeholder : null;
 
-    this.max_values = ('maxValues' in data) | ('max_values' in data) ? resolveMaxValues(data.maxValues, data.max_values) : undefined;
+    this.max_values = 'maxValues' in data || 'max_values' in data ? Util.resolveMaxValues(data.maxValues, data.max_values) : undefined;
 
-    this.min_values = ('minValues' in data) | ('min_values' in data) ? resolveMinValues(data.minValues, data.min_values) : undefined;
+    this.min_values = 'minValues' in data || 'min_values' in data ? Util.resolveMinValues(data.minValues, data.min_values) : undefined;
+
+    this.disabled = 'disabled' in data && typeof data.disabled === 'boolean' ? data.disabled : false;
 
     this.options = [];
     if ('option' in data) {
@@ -54,6 +54,11 @@ class MessageMenu extends BaseMessageComponent {
     return this;
   }
 
+  setDisabled(disable = true) {
+    this.disabled = typeof disable === 'boolean' ? disable : true;
+    return this;
+  }
+
   addOption(option) {
     option.type = 'SELECT_MENU_OPTION';
     this.options.push(BaseMessageComponent.create(option));
@@ -78,6 +83,7 @@ class MessageMenu extends BaseMessageComponent {
       max_values: this.max_values,
       min_values: this.min_values,
       options: this.options,
+      disabled: this.disabled,
     };
   }
 }

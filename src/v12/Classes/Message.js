@@ -2,13 +2,12 @@ const Message = require('discord.js').Structures.get('Message');
 const ButtonCollector = require('./ButtonCollector');
 const MenuCollector = require('./MenuCollector');
 const APIMessage = require('./APIMessage').APIMessage;
-const BaseMessageComponent = require('./interfaces/BaseMessageComponent');
 
 class ExtendedMessage extends Message {
   _patch(data) {
     super._patch(data);
     if (data.components && Array.isArray(data.components) && data.components.length > 0) {
-      this.components = data.components.map((c) => BaseMessageComponent.create(c));
+      this.components = data.components.map((c) => c);
     } else {
       this.components = [];
     }

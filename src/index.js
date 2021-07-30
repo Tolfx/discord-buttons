@@ -7,17 +7,15 @@ const Message = require('./v12/Classes/Message');
 const { MessageComponentTypes } = require('./v12/Constants');
 
 var version = require('discord.js').version.split('');
-if (version.includes('(')) {
-  version = version.join('').split('(').pop().split('');
-}
+if (version.includes('(')) version = version.join('').split('(').pop().split('');
 version = parseInt(version[0] + version[1]);
 
 module.exports = (client) => {
   if (version != 12) {
-    throw new Error('The discord.js version must be v12 or high');
+    throw new Error('Your discord.js version must be v12 or higher.');
   }
 
-  if (!client || !client instanceof Client) throw new Error("INVALID_CLIENT_PROVIDED: The Discord.js Client isn't provided or it's invalid.");
+  if (!(client instanceof Client)) throw new Error('INVALID_CLIENT_PROVIDED: Your discord.js Client is invalid or has not been provided.');
 
   const message = Structures.get('Message');
   if (!message.createButtonCollector || typeof message.createButtonCollector !== 'function') {
@@ -40,7 +38,7 @@ module.exports = (client) => {
         break;
 
       default:
-        client.emit('debug', `Got unknown interaction component type, ${data.data.component_type}`);
+        client.emit('debug', `Unknown interaction component type, ${data.data.component_type}`);
         break;
     }
   });
@@ -48,7 +46,7 @@ module.exports = (client) => {
 
 module.exports.multipleImport = (...clients) => {
   if (version != 12) {
-    throw new Error('The discord.js version must be v12 or high');
+    throw new Error('Your discord.js version must be v12 or higher.');
   }
 
   const message = Structures.get('Message');
@@ -60,7 +58,7 @@ module.exports.multipleImport = (...clients) => {
   }
 
   clients.forEach((client) => {
-    if (!client || !client instanceof Client) throw new Error("INVALID_CLIENT_PROVIDED: The Discord.js Client isn't provided or it's invalid.");
+    if (!(client instanceof Client)) throw new Error('INVALID_CLIENT_PROVIDED: Your discord.js Client is invalid or has not been provided.');
 
     client.ws.on('INTERACTION_CREATE', (data) => {
       if (!data.data.component_type) return;
@@ -74,7 +72,7 @@ module.exports.multipleImport = (...clients) => {
           client.emit('clickMenu', new MessageComponent(client, data, true));
           break;
         default:
-          client.emit('debug', `Got unknown interaction component type, ${data.data.component_type}`);
+          client.emit('debug', `Unknown interaction component type, ${data.data.component_type}`);
           break;
       }
     });
