@@ -1,6 +1,5 @@
 const { resolveString } = require('discord.js').Util;
 const Util = require('../Util');
-console.log(Util)
 
 class MessageMenuOption {
   constructor(data = {}) {
@@ -40,7 +39,6 @@ class MessageMenuOption {
   }
 
   setEmoji(emoji, animated) {
-    console.log(Util)
     this.emoji = Util.resolveEmoji(emoji, animated);
     return this;
   }

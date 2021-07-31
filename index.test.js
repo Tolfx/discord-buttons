@@ -37,11 +37,13 @@ client.on('message', async (message) => {
             .setEmoji('❌')
             .setDisabled();
 
-        console.log(btn.emoji)
+        console.log(new disbut.MessageActionRow())
 
-        let group1 = new disbut.MessageActionRow().addComponent(btn);
+        let group1 = new disbut.MessageActionRow()
+            .addComponent(btn);
 
-        let group2 = new disbut.MessageActionRow().addComponent(select);
+        let group2 = new disbut.MessageActionRow()
+            .addComponent(select);
 
         let m = await message.channel.send('hi', { components: [group1, group2] });
 
