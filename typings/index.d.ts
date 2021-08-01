@@ -56,6 +56,7 @@ declare module 'discord.js' {
   export interface Message {
     components: MessageActionRow[];
     createButtonCollector(filter: CollectorFilter, options?: AwaitMessageButtonOptions): ButtonCollector;
+    createMenuCollector(filter: CollectorFilter, options?: AwaitMessageMenuOptions): MenuCollector;
     awaitButtons(filter: CollectorFilter, options?: AwaitMessageButtonOptions): Promise<Collection<Snowflake, MessageComponent>>;
     edit(
         content: APIMessageContentResolvable | MessageEditOptions | MessageEmbed | APIMessage,
