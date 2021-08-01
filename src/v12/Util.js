@@ -4,7 +4,7 @@ const {
   MessageComponentTypes
 } = require('./Constants');
 
-module.exports = {
+const Util = {
   resolveStyle(style) {
     if (!style) throw new TypeError('NO_BUTTON_STYLE: Please provide a button style.');
 
