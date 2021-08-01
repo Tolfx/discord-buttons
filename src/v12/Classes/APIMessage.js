@@ -1,7 +1,6 @@
 const { APIMessage: dAPIMessage, MessageEmbed } = require('discord.js');
 const Util = require('../Util');
 const { MessageComponentTypes } = require('../Constants.js');
-const BaseMessageComponent = require('./interfaces/BaseMessageComponent');
 const MessageActionRow = require('./MessageActionRow');
 const MessageButton = require('./MessageButton');
 const MessageMenu = require('./MessageMenu');

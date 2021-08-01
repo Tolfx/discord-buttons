@@ -1,16 +1,15 @@
 const { MessageComponentTypes, MessageButtonStyles, MessageButtonStylesAliases } = require('../Constants.js');
 const BaseMessageComponent = require('./interfaces/BaseMessageComponent');
 const { resolveString } = require('discord.js').Util;
-const { resolveStyle } = require('../Util');
+const Util = require('../Util');
 
-class MessageButton extends BaseMessageComponent {
+class MessageButton {
   constructor(data = {}) {
-    super({ type: 'BUTTON' });
     this.setup(data);
   }
 
   setup(data) {
-    this.style = 'style' in data ? resolveStyle(data.style) : null;
+    this.style = 'style' in data ? Util.resolveStyle(data.style) : null;
 
     this.label = 'label' in data && data.label ? resolveString(data.label) : undefined;
 
@@ -28,7 +27,7 @@ class MessageButton extends BaseMessageComponent {
   }
 
   setStyle(style) {
-    style = resolveStyle(style);
+    style = Util.resolveStyle(style);
     this.style = style;
     return this;
   }

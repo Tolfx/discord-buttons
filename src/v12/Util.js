@@ -1,4 +1,8 @@
-const { MessageButtonStyles, MessageButtonStylesAliases, MessageComponentTypes } = require('./Constants.js');
+const {
+  MessageButtonStyles,
+  MessageButtonStylesAliases,
+  MessageComponentTypes
+} = require('./Constants');
 
 module.exports = {
   resolveStyle(style) {
@@ -27,8 +31,10 @@ module.exports = {
       throw new TypeError('BOTH_URL_CUSTOM_ID: A custom id and url cannot both be specified.');
 
     if (data.style !== MessageButtonStyles['url'] && !data.custom_id) throw new TypeError('NO_BUTTON_ID: Please provide a button id');
-
-    if (data.emoji && data.emoji.id && isNaN(data.emoji.id)) throw new TypeError('INCORRECT_EMOJI_ID: Please provide correct emoji id');
+  },
+  checkMenu(data) {
+    if (data.type !== MessageComponentTypes.SELECT_MENU)
+      throw new TypeError('INVALID_MENU_TYPE: Invalid type.');
 
     if (data.emoji && data.emoji.name && this.isEmoji(data.emoji.name) === false)
       throw new TypeError('INCORRECT_EMOJI_NAME: Please provide a valid emoji');
@@ -51,12 +57,13 @@ module.exports = {
 
     if (!data.custom_id) throw new Error('NO_MENU_ID: Please provide a menu id.');
 
-    let options = this.resolveMenuOptions(data.options);
+    if (typeof (data.placeholder) != 'string')
+      throw new Error(`INVALID_MENU_PLACEHOLDER: The typeof MessageMenu.placeholder must be a string, received ${typeof (data.placeholder)} instead.`);
 
     if (options.length < 1) throw new Error('NO_BUTTON_OPTIONS: Please provide at least one menu option.');
 
-    let maxValues = this.resolveMaxValues(data.max_values);
-    let minValues = this.resolveMinValues(data.min_values);
+    if (data.min_values && typeof (data.min_values) != 'number')
+      throw new Error(`INVALID_MENU_MIN_VALUES: The typeof MessageMenu.minValues must be a number, received ${typeof (data.min_values)} instead.`);
 
     let disabled = typeof data.disabled === 'boolean' ? data.disabled : false;
 
@@ -73,7 +80,23 @@ module.exports = {
   resolveMenuOptions(data) {
     if (!Array.isArray(data)) throw new Error('INVALID_OPTIONS: The select menu options must be an array.');
 
-    let options = [];
+    if (typeof (data.disabled) != 'boolean')
+      throw new Error(`INVALID_MENU_DISABLED_OPTION: The typeof MessageMenu.disabled must be boolean, received ${typeof (data.disabled)} instead.`);
+
+    this.checkMenuOptions(data.options);
+
+    return true;
+  },
+  checkMenuOptions(data) {
+    if (!Array.isArray(data)) throw new Error('INVALID_OPTIONS: The select menu options must be an array.');
+
+    if (data.length < 1)
+      throw new Error('TOO_LITTLE_MENU_OPTIONS: Please provide at least one MessageMenu option.');
+
+    if (data.length > 25)
+      throw new Error(`TOO_MUCH_MENU_OPTIONS: The limit of MessageMenu.options is 25, you provided ${options.length} options.`);
+
+    let hasDefault = false;
     data.map((d) => {
       if (!d.value) throw new Error('VALUE_MISSING: Please provide a value for this option.');
 
@@ -88,25 +111,42 @@ module.exports = {
       });
     });
 
-    return options;
+    return true;
   },
+
   resolveType(type) {
     return typeof type === 'string' ? MessageComponentTypes[type] : type;
   },
+
   resolveMaxValues(m1, m2) {
     return m1 || m2;
   },
+
   resolveMinValues(m1, m2) {
     return m1 || m2;
   },
-  isEmoji(string) {
-    let emojiRagex =
-      /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
-    return emojiRagex.test(string);
+
+  resolveEmoji(emoji, animated) {
+    if (!emoji) return {};
+    if (typeof emoji === 'string')
+      return /^\d{17,19}$/.test(emoji) ? { id: emoji, animated: typeof animated === 'boolean' ? animated : false } : this.parseEmoji(emoji, animated);
+    if (!emoji.id && !emoji.name) return null;
+    if (typeof animated === 'boolean') emoji.animated = animated;
+    return emoji;
   },
+
+  parseEmoji(emoji, animated) {
+    if (emoji.includes('%')) emoji = decodeURIComponent(text);
+    if (!emoji.includes(':')) return { animated: typeof animated === 'boolean' ? animated : false, name: emoji, id: null };
+    const match = emoji.match(/<?(?:(a):)?(\w{2,32}):(\d{17,19})?>?/);
+    return match && { animated: typeof animated === 'boolean' ? animated : Boolean(match[1]), name: match[2], id: match[3] || null };
+  },
+
   verifyString(data, allowEmpty = true, errorMessage = `Expected a string, got ${data} instead.`, error = Error) {
     if (typeof data !== 'string') throw new error(errorMessage);
     if (!allowEmpty && data.length === 0) throw new error(errorMessage);
     return data;
-  },
-};
+  }
+}
+
+module.exports = Util;

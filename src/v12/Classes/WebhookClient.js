@@ -13,11 +13,7 @@ class ExtendedWebhookClient extends WebhookClient {
     }
 
     if (options && options.embed) {
-      options
-        ? options.embeds && Array.isArray(options.embeds)
-          ? options.embeds.push(options.embed)
-          : (options.embeds = [options.embed])
-        : (options = {}) && (options.embeds = [options.embed]);
+      options.embeds && Array.isArray(options.embeds) ? options.embeds.push(options.embed) : (options.embeds = [options.embed]);
       options.embed = null;
     }
 

@@ -1,4 +1,5 @@
 const { resolveString } = require('discord.js').Util;
+const Util = require('../Util');
 
 class MessageMenuOption {
   constructor(data = {}) {

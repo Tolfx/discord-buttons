@@ -44,6 +44,15 @@ declare module 'discord.js' {
     menus?: MessageMenu | [MessageMenu, ...MessageMenu[]];
   }
 
+  export interface MessageEditOptions {
+    component?: MessageButton | MessageMenu | MessageActionRow;
+    components?: MessageActionRow[];
+    button?: MessageButton | [MessageButton, ...MessageButton[]];
+    buttons?: MessageButton | [MessageButton, ...MessageButton[]];
+    menu?: MessageMenu | [MessageMenu, ...MessageMenu[]];
+    menus?: MessageMenu | [MessageMenu, ...MessageMenu[]];
+  }
+
   export interface Message {
     components: MessageActionRow[];
     createButtonCollector(filter: CollectorFilter, options?: AwaitMessageButtonOptions): ButtonCollector;

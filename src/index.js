@@ -7,7 +7,6 @@ const Message = require('./v12/Classes/Message');
 const { MessageComponentTypes } = require('./v12/Constants');
 
 var version = require('discord.js').version.split('');
-
 if (version.includes('(')) version = version.join('').split('(').pop().split('');
 version = parseInt(version[0] + version[1]);
 
@@ -85,14 +84,14 @@ module.exports.MessageMenu = require(`./v12/Classes/MessageMenu`);
 module.exports.MessageMenuOption = require(`./v12/Classes/MessageMenuOption`);
 module.exports.MessageActionRow = require('./v12/Classes/MessageActionRow');
 module.exports.MessageComponent = require('./v12/Classes/MessageComponent');
-module.exports.Message = require(`./v12/Classes/Message`);
+module.exports.Message = Message;
 module.exports.ButtonCollector = require(`./v12/Classes/ButtonCollector`);
 module.exports.MenuCollector = require(`./v12/Classes/MenuCollector`);
 module.exports.APIMessage = require('./v12/Classes/APIMessage').APIMessage;
 module.exports.sendAPICallback = require('./v12/Classes/APIMessage').sendAPICallback;
-module.exports.DMChannel = require('./v12/Classes/DMChannel');
-module.exports.NewsChannel = require('./v12/Classes/NewsChannel');
-module.exports.TextChannel = require('./v12/Classes/TextChannel');
+module.exports.DMChannel = DMChannel;
+module.exports.NewsChannel = NewsChannel;
+module.exports.TextChannel = TextChannel;
 module.exports.WebhookClient = require('./v12/Classes/WebhookClient');
 module.exports.Util = require('./v12/Util');
 module.exports.Constants = require('./v12/Constants');
