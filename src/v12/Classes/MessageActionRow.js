@@ -5,7 +5,7 @@ const Util = require('../Util');
 
 class MessageActionRow {
   constructor(data = {}) {
-    if (!data.type) return {};
+    // if (!data.type) return {};
     this.hasMenu = false;
     this.setup(data);
   }
