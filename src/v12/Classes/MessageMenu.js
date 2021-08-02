@@ -3,33 +3,40 @@ const Util = require('../Util');
 const MessageMenuOption = require('./MessageMenuOption');
 
 class MessageMenu {
-  constructor(data = {}) {
-    this.setup(data);
+  constructor(data = {}, turnit) {
+    this.setup(data, turnit);
   }
 
-  setup(data) {
+  setup(data, turnit = false) {
+    this.type = MessageComponentTypes.SELECT_MENU;
+
     this.placeholder = 'placeholder' in data ? data.placeholder : null;
 
-    this.max_values = 'maxValues' in data || 'max_values' in data ? Util.resolveMaxValues(data.maxValues, data.max_values) : undefined;
+    if (turnit) this.maxValues = data.max_values;
+    else this.max_values = data.maxValues || data.max_values;
 
-    this.min_values = 'minValues' in data || 'min_values' in data ? Util.resolveMinValues(data.minValues, data.min_values) : undefined;
+    if (turnit) this.minValues = data.min_values;
+    else this.min_values = data.minValues || data.min_values;
 
-    this.disabled = 'disabled' in data && typeof data.disabled === 'boolean' ? data.disabled : false;
+    this.disabled = typeof data.disabled === 'boolean' ? data.disabled : false;
+
+    if (turnit) this.hash = data.hash;
 
     this.options = [];
     if ('option' in data) {
-      data.option.type = 'SELECT_MENU_OPTION';
-      this.options.push(BaseMessageComponent.create(data.option));
+      this.options.push(new MessageMenuOption(data.option));
     }
 
     if ('options' in data) {
       data.options.map((c) => {
-        this.options.push(new MessageMenuOption(c).toJSON());
+        this.options.push(new MessageMenuOption(c));
       });
     }
 
-    if (('id' in data && data.id) || ('custom_id' in data && data.custom_id)) this.custom_id = data.id || data.custom_id;
-    else this.custom_id = undefined;
+    let id;
+    if (data.id || data.custom_id) id = data.id || data.custom_id;
+
+    turnit ? (this.id = id) : (this.custom_id = id);
 
     return this;
   }
@@ -40,17 +47,17 @@ class MessageMenu {
   }
 
   setID(id) {
-    this.custom_id = id;
+    this.custom_id = Util.verifyString(id);
     return this;
   }
 
   setMaxValues(number) {
-    this.max_values = resolveMaxValues(number);
+    this.max_values = number;
     return this;
   }
 
   setMinValues(number) {
-    this.min_values = resolveMinValues(number);
+    this.min_values = number;
     return this;
   }
 
@@ -60,18 +67,17 @@ class MessageMenu {
   }
 
   addOption(option) {
-    option.type = 'SELECT_MENU_OPTION';
-    this.options.push(BaseMessageComponent.create(option));
+    this.options.push(new MessageMenuOption(option));
     return this;
   }
 
   addOptions(...options) {
-    this.options.push(...options.flat(Infinity).map((c) => new MessageMenuOption(c).toJSON()));
+    this.options.push(...options.flat(Infinity).map((c) => new MessageMenuOption(c)));
     return this;
   }
 
-  removeOptions(index, deleteCount, ...options) {
-    this.components.splice(index, deleteCount, ...options.flat(Infinity).map((c) => new MessageMenuOption(c).toJSON()));
+  removeOptions(index, deleteCount) {
+    this.components.splice(index, deleteCount);
     return this;
   }
 
@@ -83,7 +89,7 @@ class MessageMenu {
       max_values: this.max_values,
       min_values: this.min_values,
       options: this.options,
-      disabled: this.disabled,
+      disabled: this.disabled || false,
     };
   }
 }

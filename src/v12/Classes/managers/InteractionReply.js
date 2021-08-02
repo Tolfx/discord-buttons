@@ -1,5 +1,7 @@
 const { InteractionReplyTypes } = require('../../Constants');
 const { sendAPICallback } = require('../APIMessage');
+const ButtonCollector = require('../ButtonCollector');
+const MenuCollector = require('../MenuCollector');
 
 class InteractionReply {
   constructor(client, component, webhook) {
@@ -11,10 +13,12 @@ class InteractionReply {
 
     this.has = false;
 
-    this.isEphemeral = undefined;
+    this.isEphemeral = false;
+
+    this.message = undefined;
   }
 
-  async send(content, options) {
+  send = async (content, options) => {
     if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
 
     if (options === null && options !== undefined) options = { components: null };
@@ -45,17 +49,17 @@ class InteractionReply {
     });
     this.has = true;
     return this;
-  }
+  };
 
-  async edit(content, options) {
+  edit = async (content, options) => {
     if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button does not have a reply.');
 
     if (options === null && options !== undefined) options = { components: null };
 
     return await this.webhook.editMessage('@original', content, options);
-  }
+  };
 
-  async defer(ephemeral = false) {
+  defer = async (ephemeral = false) => {
     if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
 
     if (ephemeral) this.isEphemeral = true;
@@ -70,9 +74,9 @@ class InteractionReply {
     });
     this.has = true;
     return this;
-  }
+  };
 
-  async think(ephemeral = false) {
+  think = async (ephemeral = false) => {
     if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
 
     if (ephemeral) this.isEphemeral = true;
@@ -87,18 +91,19 @@ class InteractionReply {
     });
     this.has = true;
     return this;
-  }
+  };
 
-  async fetch() {
-    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral.');
-    return await this.webhook.fetchMessage('@original');
-  }
+  fetch = async () => {
+    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply of this button is ephemeral.');
+    this.message = this.webhook.fetchMessage('@original').then((d) => this.client.actions.MessageCreate.handle(d).message);
+    return this.message;
+  };
 
-  async delete() {
+  delete = async () => {
     if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button does not have a reply.');
-    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral.');
+    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply of this button is ephemeral.');
     return await this.webhook.deleteMessage('@original');
-  }
+  };
 }
 
 module.exports = InteractionReply;
