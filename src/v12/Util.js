@@ -128,10 +128,6 @@ class Util extends null {
     return typeof type === 'string' ? MessageComponentTypes[type] : type;
   }
 
-  static resolveMenuValues(m1, m2) {
-    return m2 === undefined ? m1 : m2;
-  }
-
   static resolveEmoji(emoji, animated) {
     if (!emoji) return {};
     if (typeof emoji === 'string')
