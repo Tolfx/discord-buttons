@@ -3,92 +3,98 @@ const { resolveString } = require('discord.js').Util;
 const Util = require('../Util');
 
 class MessageButton {
-  constructor(data = {}) {
-    this.setup(data);
-  }
+    constructor(data = {}, turnit) {
+        this.setup(data, turnit);
+    }
 
-  setup(data) {
-    this.style = 'style' in data ? Util.resolveStyle(data.style) : null;
+    setup(data, turnit = false) {
+        this.type = MessageComponentTypes.BUTTON;
 
-    this.label = 'label' in data && data.label ? resolveString(data.label) : undefined;
+        this.style = 'style' in data ? Util.resolveStyle(data.style, turnit) : undefined;
 
-    this.disabled = 'disabled' in data ? data.disabled : false;
+        this.label = 'label' in data && data.label ? Util.verifyString(data.label) : undefined;
 
-    if (data.emoji) this.setEmoji(data.emoji);
+        this.disabled = 'disabled' in data ? data.disabled : false;
 
-    if ('url' in data && data.url) this.url = resolveString(data.url);
-    else this.url = undefined;
+        if (turnit) this.hash = data.hash;
 
-    if (('id' in data && data.id) || ('custom_id' in data && data.custom_id)) this.custom_id = data.id || data.custom_id;
-    else this.custom_id = undefined;
+        if (data.emoji) this.setEmoji(data.emoji);
 
-    return this;
-  }
+        if ('url' in data && data.url) this.url = Util.verifyString(data.url);
+        else this.url = undefined;
 
-  setStyle(style) {
-    style = Util.resolveStyle(style);
-    this.style = style;
-    return this;
-  }
+        let id;
+        if (data.id || data.custom_id) id = data.id || data.custom_id;
 
-  setLabel(label) {
-    label = resolveString(label);
-    this.label = label;
-    return this;
-  }
+        turnit ? (this.id = id) : (this.custom_id = id);
 
-  setDisabled(disabled) {
-    if (disabled === false) this.disabled = false;
-    else this.disabled = true;
-    return this;
-  }
+        return this;
+    }
 
-  setURL(url) {
-    this.url = resolveString(url);
-    return this;
-  }
+    setStyle(style) {
+        style = Util.resolveStyle(style);
+        this.style = style;
+        return this;
+    }
 
-  setID(id) {
-    this.custom_id = resolveString(id);
-    return this;
-  }
+    setLabel(label) {
+        label = Util.verifyString(label);
+        this.label = label;
+        return this;
+    }
 
-  setEmoji(emoji, animated) {
-    if (!emoji) throw new Error('MISSING_EMOJI: `.setEmoji` was used without a provided emoji.');
+    setDisabled(disabled) {
+        if (disabled === false) this.disabled = false;
+        else this.disabled = true;
+        return this;
+    }
 
-    this.emoji = {
-      id: undefined,
-      name: undefined,
-    };
+    setURL(url) {
+        this.url = Util.verifyString(url);
+        return this;
+    }
 
-    if (!isNaN(emoji)) this.emoji.id = emoji;
-    if (!isNaN(emoji.id)) this.emoji.id = emoji.id;
-    if (emoji.name) this.emoji.name = emoji.name;
+    setID(id) {
+        this.custom_id = Util.verifyString(id);
+        return this;
+    }
 
-    if (!this.emoji.id && !this.emoji.name) this.emoji.name = emoji;
+    setEmoji(emoji, animated) {
+        if (!emoji) throw new Error('MISSING_EMOJI: `.setEmoji` was used without a provided emoji.');
 
-    if (typeof animated === 'boolean') this.emoji.animated = animated;
+        this.emoji = {
+            id: undefined,
+            name: undefined,
+        };
 
-    return this;
-  }
+        if (!isNaN(emoji)) this.emoji.id = emoji;
+        if (!isNaN(emoji.id)) this.emoji.id = emoji.id;
+        if (emoji.name) this.emoji.name = emoji.name;
 
-  toJSON() {
-     if(this.url)
-        this.style = MessageButtonStyles["url"];
-    
-     if(typeof this.style === "string")
-        this.style = MessageButtonStyles[this.style] ? MessageButtonStyles[this.style] : MessageButtonStylesAliases[this.style];
-    
-    return {
-      type: MessageComponentTypes.BUTTON,
-      style: this.style,
-      label: this.label,
-      emoji: this.emoji,
-      disabled: this.disabled,
-      url: this.url,
-      custom_id: this.custom_id,
-    };
-  }
+        if (!this.emoji.id && !this.emoji.name) this.emoji.name = emoji;
+
+        if (typeof animated === 'boolean') this.emoji.animated = animated;
+
+        return this;
+    }
+
+    toJSON() {
+        if (this.url)
+            this.style = MessageButtonStyles["url"];
+
+        if (typeof this.style === "string")
+            this.style = MessageButtonStyles[this.style] ? MessageButtonStyles[this.style] : MessageButtonStylesAliases[this.style];
+
+        return {
+            type: MessageComponentTypes.BUTTON,
+            style: this.style,
+            label: this.label,
+            emoji: this.emoji,
+            disabled: this.disabled,
+            url: this.url,
+            custom_id: this.custom_id,
+        };
+    }
 }
 
 module.exports = MessageButton;

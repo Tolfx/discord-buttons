@@ -1,104 +1,109 @@
 const { InteractionReplyTypes } = require('../../Constants');
 const { sendAPICallback } = require('../APIMessage');
+const ButtonCollector = require('../ButtonCollector');
+const MenuCollector = require('../MenuCollector');
 
 class InteractionReply {
-  constructor(client, component, webhook) {
-    this.client = client;
+    constructor(client, component, webhook) {
+        this.client = client;
 
-    this.component = component;
+        this.component = component;
 
-    this.webhook = webhook;
+        this.webhook = webhook;
 
-    this.has = false;
+        this.has = false;
 
-    this.isEphemeral = undefined;
-  }
+        this.isEphemeral = false;
 
-  async send(content, options) {
-    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
-
-    if (options === null && options !== undefined) options = { components: null };
-
-    if (typeof options === 'boolean' && options === true) options = { flags: 1 << 6 };
-
-    let apiMessage;
-    if (content instanceof sendAPICallback) {
-      apiMessage = content.resolveData();
-    } else {
-      apiMessage = sendAPICallback.create(this, content, options).resolveData();
+        this.message = undefined;
     }
 
-    if (Array.isArray(apiMessage.data.content)) {
-      apiMessage.data.content = apiMessage.data.content[0];
-    }
+    send = async(content, options) => {
+        if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
 
-    const { data, files } = await apiMessage.resolveFiles();
+        if (options === null && options !== undefined) options = { components: null };
 
-    if (data.flags === 1 << 6) this.isEphemeral = true;
+        if (typeof options === 'boolean' && options === true) options = { flags: 1 << 6 };
 
-    await this.client.api.interactions(this.component.discordID, this.component.token).callback.post({
-      data: {
-        data: data,
-        type: InteractionReplyTypes.CHANNEL_MESSAGE_WITH_SOURCE,
-      },
-      files,
-    });
-    this.has = true;
-    return this;
-  }
+        let apiMessage;
+        if (content instanceof sendAPICallback) {
+            apiMessage = content.resolveData();
+        } else {
+            apiMessage = sendAPICallback.create(this, content, options).resolveData();
+        }
 
-  async edit(content, options) {
-    if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button does not have a reply.');
+        if (Array.isArray(apiMessage.data.content)) {
+            apiMessage.data.content = apiMessage.data.content[0];
+        }
 
-    if (options === null && options !== undefined) options = { components: null };
+        const { data, files } = await apiMessage.resolveFiles();
 
-    return await this.webhook.editMessage('@original', content, options);
-  }
+        if (data.flags === 1 << 6) this.isEphemeral = true;
 
-  async defer(ephemeral = false) {
-    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
+        await this.client.api.interactions(this.component.discordID, this.component.token).callback.post({
+            data: {
+                data: data,
+                type: InteractionReplyTypes.CHANNEL_MESSAGE_WITH_SOURCE,
+            },
+            files,
+        });
+        this.has = true;
+        return this;
+    };
 
-    if (ephemeral) this.isEphemeral = true;
+    edit = async(content, options) => {
+        if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button does not have a reply.');
 
-    await this.client.api.interactions(this.component.discordID, this.component.token).callback.post({
-      data: {
-        data: {
-          flags: ephemeral ? 1 << 6 : null,
-        },
-        type: InteractionReplyTypes.DEFFERED_UPDATE_MESSAGE,
-      },
-    });
-    this.has = true;
-    return this;
-  }
+        if (options === null && options !== undefined) options = { components: null };
 
-  async think(ephemeral = false) {
-    if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
+        return await this.webhook.editMessage('@original', content, options);
+    };
 
-    if (ephemeral) this.isEphemeral = true;
+    defer = async(ephemeral = false) => {
+        if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
 
-    await this.client.api.interactions(this.component.discordID, this.component.token).callback.post({
-      data: {
-        data: {
-          flags: ephemeral ? 1 << 6 : null,
-        },
-        type: InteractionReplyTypes.DEFFERED_CHANNEL_MESSAGE_WITH_SOURCE,
-      },
-    });
-    this.has = true;
-    return this;
-  }
+        if (ephemeral) this.isEphemeral = true;
 
-  async fetch() {
-    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral.');
-    return await this.webhook.fetchMessage('@original');
-  }
+        await this.client.api.interactions(this.component.discordID, this.component.token).callback.post({
+            data: {
+                data: {
+                    flags: ephemeral ? 1 << 6 : null,
+                },
+                type: InteractionReplyTypes.DEFFERED_UPDATE_MESSAGE,
+            },
+        });
+        this.has = true;
+        return this;
+    };
 
-  async delete() {
-    if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button has no reply.');
-    if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral.');
-    return await this.webhook.deleteMessage('@original');
-  }
+    think = async(ephemeral = false) => {
+        if (this.has) throw new Error('BUTTON_ALREADY_REPLIED: This button already has already been replied to.');
+
+        if (ephemeral) this.isEphemeral = true;
+
+        await this.client.api.interactions(this.component.discordID, this.component.token).callback.post({
+            data: {
+                data: {
+                    flags: ephemeral ? 1 << 6 : null,
+                },
+                type: InteractionReplyTypes.DEFFERED_CHANNEL_MESSAGE_WITH_SOURCE,
+            },
+        });
+        this.has = true;
+        return this;
+    };
+
+    fetch = async() => {
+        if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply of this button is ephemeral.');
+        this.message = this.webhook.fetchMessage('@original').then((d) => this.client.actions.MessageCreate.handle(d).message);
+        return this.message;
+    };
+
+    async delete() {
+        if (!this.has) throw new Error('BUTTON_HAS_NO_REPLY: This button has no reply.');
+        if (this.isEphemeral) throw new Error('REPLY_EPHEMERAL: The reply for this button is ephemeral.');
+        return await this.webhook.deleteMessage('@original');
+    };
 }
 
 module.exports = InteractionReply;
