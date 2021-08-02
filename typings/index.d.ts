@@ -159,11 +159,6 @@ export interface MessageButtonData {
   custom_id?: string;
 }
 
-export interface MessageActionRowData {
-  type: number | string;
-  components: MessageButton[];
-}
-
 export interface MessageMenuData {
   type?: MessageComponentTypes.SELECT_MENU;
   custom_id?: string;
@@ -247,7 +242,7 @@ export class MessageActionRow extends BaseMessageComponent {
   addComponents(...components: MessageButton[] | MessageMenu[]): MessageActionRow;
   addComponent(component: MessageButton | MessageMenu): MessageActionRow;
   toJSON(): {
-    components: MessageButton[];
+    components: MessageButton[] | MessageMenu[];
     type: string | number;
   };
 }
