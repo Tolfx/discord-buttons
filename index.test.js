@@ -95,7 +95,7 @@ client.on('clickMenu', async (menu) => {
     }
 });
 
-client.login('NjY4NzczMzI1NTgwNzk1OTQ0.XiWJsg.lLhX96K09bUhyjkT8bpRfF1FOY8');
+client.login('');
 
 function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
