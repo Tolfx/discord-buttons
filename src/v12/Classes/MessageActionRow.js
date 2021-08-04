@@ -40,7 +40,7 @@ class MessageActionRow {
 
                     if (this.components.length > 4) throw new Error('TOO_MUCH_COMPONENTS: You can provide 5 buttons per row');
 
-                    Util.checkButton(c);
+                    // Util.checkButton(c);
                     return this.components.push(new MessageButton(c, turnit));
                 } else if (c.type === MessageComponentTypes.SELECT_MENU) {
                     if (this.components.length > 0) throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
@@ -60,7 +60,7 @@ class MessageActionRow {
 
                 if (this.components.length > 4) throw new Error('TOO_MUCH_COMPONENTS: You can provide 5 buttons per row');
 
-                Util.checkButton(c);
+                // Util.checkButton(c);
                 return this.components.push(new MessageButton(c, this._turnit));
             } else if (c.type === MessageComponentTypes.SELECT_MENU) {
                 if (this.components.length > 0) throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
@@ -78,7 +78,7 @@ class MessageActionRow {
 
             if (this.components.length > 4) throw new Error('TOO_MUCH_COMPONENTS: You can provide 5 buttons per row');
 
-            Util.checkButton(data);
+            // Util.checkButton(data);
             this.components.push(new MessageButton(data, this._turnit));
         } else if (data.type === MessageComponentTypes.SELECT_MENU) {
             if (this.components.length > 0) throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
