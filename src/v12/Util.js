@@ -13,7 +13,7 @@ class Util extends null {
 
     return MessageButtonStyles[style] ? MessageButtonStyles[style] : MessageButtonStylesAliases[style];
   }
-  resolveButton(data) {
+  static resolveButton(data) {
     if (data.type !== MessageComponentTypes.BUTTON) throw new TypeError('INVALID_BUTTON_TYPE: Invalid type.');
     
     if(data.url && data.style !== MessageButtonStyles["url"])
@@ -65,14 +65,14 @@ class Util extends null {
     return {
       type: MessageComponentTypes.SELECT_MENU,
       custom_id: data.custom_id,
-      options: options,
+      options: data.options,
       placeholder: data.placeholder,
-      min_values: minValues,
-      max_values: maxValues,
+      min_values: data.minValues,
+      max_values: data.maxValues,
       disabled: disabled
     };
   }
-  resolveMenuOptions(data) {
+  static resolveMenuOptions(data) {
     if (!Array.isArray(data)) throw new Error('INVALID_OPTIONS: The select menu options must be an array.');
 
     if (typeof data.disabled != 'boolean')
@@ -82,7 +82,7 @@ class Util extends null {
 
     return true;
   }
-  checkMenuOptions(data) {
+  static checkMenuOptions(data) {
     if (!Array.isArray(data)) throw new Error('INVALID_OPTIONS: The select menu options must be an array.');
 
     if (data.length < 1) throw new Error('TOO_LITTLE_MENU_OPTIONS: Please provide at least one MessageMenu option.');
@@ -134,7 +134,7 @@ class Util extends null {
     return true;
   }
 
-  resolveType(type) {
+  static resolveType(type) {
     return typeof type === 'string' ? MessageComponentTypes[type] : type;
   }
 
@@ -147,14 +147,14 @@ class Util extends null {
     return emoji;
   }
 
-  parseEmoji(emoji, animated) {
+  static parseEmoji(emoji, animated) {
     if (emoji.includes('%')) emoji = decodeURIComponent(text);
     if (!emoji.includes(':')) return { animated: typeof animated === 'boolean' ? animated : false, name: emoji, id: null };
     const match = emoji.match(/<?(?:(a):)?(\w{2,32}):(\d{17,19})?>?/);
     return match && { animated: typeof animated === 'boolean' ? animated : Boolean(match[1]), name: match[2], id: match[3] || null };
   }
 
-  verifyString(data, allowEmpty = true, errorMessage = `Expected a string, got ${data} instead.`, error = Error) {
+  static verifyString(data, allowEmpty = true, errorMessage = `Expected a string, got ${data} instead.`, error = Error) {
     if (typeof data !== 'string') throw new error(errorMessage);
     if (!allowEmpty && data.length === 0) throw new error(errorMessage);
     return data;

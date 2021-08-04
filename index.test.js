@@ -56,7 +56,7 @@ client.on('message', async (message) => {
             .setStyle('blurple')
             .setEmoji('❌');
 
-        let m = await message.channel.send({ description: 'testing obj embed' });
+        let m = await message.channel.send("h", { description: 'testing obj embed' });
 
         /*let collector = m.createMenuCollector((b) => b, { time: 10000 });
 
@@ -95,7 +95,7 @@ client.on('clickMenu', async (menu) => {
     }
 });
 
-client.login('');
+client.login('NjY4NzczMzI1NTgwNzk1OTQ0.XiWJsg.lLhX96K09bUhyjkT8bpRfF1FOY8');
 
 function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));

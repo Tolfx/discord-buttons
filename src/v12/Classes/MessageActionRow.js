@@ -19,7 +19,7 @@ class MessageActionRow {
         this.components = [];
         if ('component' in data) {
             if (data.type === MessageComponentTypes.BUTTON) {
-                Util.checkButton(data);
+                // Util.checkButton(data);
                 this.components.push(new MessageButton(data, turnit));
             } else if (data.type === MessageComponentTypes.SELECT_MENU) {
                 if (this.components.length > 0) throw new Error('TOO_MUCH_COMPONENTS: You can use 1 select menu per row, without other components.');
